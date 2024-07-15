@@ -2,39 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Directory Listing</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        a {
-            display: block;
-            margin: 5px 0;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Shiva Dev</title>
 </head>
 <body>
-    <h1>Directory Listing</h1>
-    <div id="listing"></div>
+    <div id="content"></div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            fetch(window.location.href)
+        const path = window.location.pathname.substring(1);  // Remove leading slash
+        if (path === "") {
+            // Load root content
+            document.getElementById('content').innerHTML = "<h1>Welcome to Java Shiva Dev</h1>";
+        } else {
+            // Load content based on path
+            fetch(`${path}/README.md`)
                 .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const listingDiv = document.getElementById('listing');
-                    const links = Array.from(doc.querySelectorAll('a'))
-                        .filter(link => link.href.includes(window.location.href) && link.text !== '../');
-                    links.forEach(link => {
-                        const a = document.createElement('a');
-                        a.href = link.href;
-                        a.textContent = link.textContent;
-                        listingDiv.appendChild(a);
-                    });
+                .then(text => {
+                    document.getElementById('content').innerHTML = `<pre>${text}</pre>`;
+                })
+                .catch(() => {
+                    document.getElementById('content').innerHTML = "<h1>404 - Not Found</h1>";
                 });
-        });
+        }
     </script>
 </body>
 </html>
